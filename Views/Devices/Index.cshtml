@@ -1,0 +1,26 @@
+@model IEnumerable<Device>
+@{
+    ViewData["Title"] = "Devices";
+    var statuses = Enum.GetValues<DeviceStatus>();
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Devices</h1>
+    <a class="btn btn-primary" asp-action="Create">Add device</a>
+</div>
+<form method="get" class="card card-body mb-3">
+ <div class="row g-2">
+  <div class="col-md-4"><input class="form-control" name="search" value="@ViewBag.Search" placeholder="Search name or code" /></div>
+  <div class="col-md-3"><select class="form-select" name="categoryId"><option value="">All categories</option>@foreach (var c in (SelectList)ViewBag.Categories) { <option value="@c.Value" selected="@c.Selected">@c.Text</option> }</select></div>
+  <div class="col-md-3"><select class="form-select" name="status"><option value="">All statuses</option>@foreach (var s in statuses) { <option value="@s" selected="@(ViewBag.Status != null && (DeviceStatus)ViewBag.Status == s)">@s</option> }</select></div>
+  <div class="col-md-2 d-grid"><button class="btn btn-outline-primary">Search / Filter</button></div>
+ </div>
+</form>
+<div class="table-responsive card"><table class="table table-striped table-hover mb-0">
+<thead><tr><th>Name</th><th>Code</th><th>Category</th><th>Status</th><th>Date of entry</th><th>Actions</th></tr></thead>
+<tbody>
+@foreach (var item in Model) {
+<tr><td>@item.Name</td><td>@item.Code</td><td>@item.Category?.Name</td><td>@item.Status</td><td>@item.DateOfEntry.ToString("yyyy-MM-dd")</td>
+<td><a asp-action="Edit" asp-route-id="@item.Id">Edit</a> | <a asp-action="Delete" asp-route-id="@item.Id">Delete</a></td></tr>
+}
+@if (!Model.Any()) { <tr><td colspan="6" class="text-center p-4">No devices found.</td></tr> }
+</tbody></table></div>
